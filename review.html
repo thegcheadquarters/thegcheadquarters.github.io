@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Review tryouts | GC HQ</title><link rel="icon" type="image/png" href="favicon.png"><link rel="stylesheet" href="style.css"><script>(function(){var ok=false;try{ok=["josh","haley","kacen"].indexOf(localStorage.getItem("gc_auth"))>-1}catch(e){}if(!ok){try{sessionStorage.setItem("gc_back",location.href)}catch(e){}location.replace("owner-login.html")}})();</script>
+<style>.vb{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.vb button{padding:16px 6px;border-radius:14px;border:0;font-weight:900;text-transform:uppercase;font-size:.95rem;cursor:pointer;color:#fff}.vb .ac{background:#1f9d55}.vb .wl{background:var(--blue)}.vb .de{background:var(--red)}.vb button:disabled{opacity:.4;cursor:not-allowed}.pill{display:inline-block;padding:3px 12px;border-radius:99px;font-weight:800;font-size:.78rem;text-transform:uppercase;color:#fff}.pill.accepted{background:#1f9d55}.pill.waitlist{background:var(--blue)}.pill.declined{background:var(--red)}.pill.pending{background:#555}.row{border-top:1px solid #ffffff18;padding:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.msg{white-space:pre-wrap;background:#0b1026;border:1px solid #ffffff22;border-radius:10px;padding:10px;margin:8px 0}</style></head><body>
+<nav><a class="logo" href="index.html">GC <b>HQ</b></a><div class="links"><a href="index.html">Home</a><a href="tryout.html">Tryouts</a><a href="rules.html">Rules</a><a href="owner-login.html" class="on">Owners</a></div></nav>
+<main class="wrap"><div class="badge">OWNER ZONE</div><h2>Review tryouts</h2><p class="sub" style="margin-left:0">Open the review link an applicant sent you, or paste their link or code here.</p>
+<div class="card"><label for="code">Applicant review link or code</label><input id="code" placeholder="Paste here"><div class="err" id="cerr"></div><button class="btn" id="load" type="button" style="margin-top:12px">Open tryout</button></div>
+<section class="card" id="view" style="display:none;margin-top:20px"></section>
+<h2>Reviewed on this device</h2><section class="card" id="list"><p>Nothing reviewed yet.</p></section>
+<div style="margin-top:26px"><a class="btn alt" id="back" href="owner-login.html" style="margin:0">Back to my HQ</a></div></main>
+<footer>The GC Headquarters. Starlight Chapter, EST. 2026. Password-protected owner area.</footer>
+<script>(function(){
+function $(i){return document.getElementById(i)}
+var me="";try{me=localStorage.getItem("gc_auth")||""}catch(e){}
+$("back").href=me+"-dashboard.html";
+var canDecide=(me==="josh"||me==="haley");
+function getV(){try{return JSON.parse(localStorage.getItem("gc_verdicts")||"{}")}catch(e){return{}}}
+function setV(v){try{localStorage.setItem("gc_verdicts",JSON.stringify(v))}catch(e){}}
+function dec(c){c=c.trim();var i=c.indexOf("#");if(i>-1)c=c.slice(i+1);c=c.replace(/-/g,"+").replace(/_/g,"/");while(c.length%4)c+="=";return JSON.parse(decodeURIComponent(escape(atob(c))))}
+function el(tag,txt,cls){var e=document.createElement(tag);if(txt!=null)e.textContent=txt;if(cls)e.className=cls;return e}
+function isMail(c){return c.indexOf("@")>-1}
+var MSG={accepted:function(t){return "Hey "+t.name+", it's the GC Headquarters. You made it, welcome to the GC! Your ticket was "+t.id+"."},waitlist:function(t){return "Hey "+t.name+", it's the GC Headquarters. You're on the waitlist for now. We'll reach out if a spot opens up. Your ticket was "+t.id+"."},declined:function(t){return "Hey "+t.name+", it's the GC Headquarters. Thanks for trying out. You didn't get a spot this time. Your ticket was "+t.id+"."}};
+function contactLink(t,m){var c=t.contact||"";if(!c)return null;if(isMail(c))return "mailto:"+encodeURIComponent(c)+"?subject="+encodeURIComponent("GC Headquarters tryout "+t.id)+"&body="+encodeURIComponent(m);return "sms:"+c.replace(/[^0-9+]/g,"")+"?&body="+encodeURIComponent(m)}
+function renderList(){var v=getV(),ids=Object.keys(v),L=$("list");L.textContent="";if(!ids.length){L.appendChild(el("p","Nothing reviewed yet."));return}
+ids.forEach(function(id){var r=v[id],row=el("div",null,"row"),a=el("div");a.appendChild(el("b",r.t.name+" ("+id+")"));a.appendChild(el("div",r.t.contact,"sub"));a.lastChild.style.margin="0";row.appendChild(a);var b=el("div");b.appendChild(el("span",r.status,"pill "+r.status));var o=el("button","Open","btn alt");o.type="button";o.style.cssText="margin:0 0 0 10px;padding:6px 14px;font-size:.8rem;box-shadow:none";o.onclick=function(){open(r.t)};b.appendChild(o);row.appendChild(b);L.appendChild(row)})}
+function open(t){var V=$("view"),v=getV(),cur=v[t.id]?v[t.id].status:"pending";V.style.display="block";V.textContent="";
+V.appendChild(el("h3",t.name+"  |  "+t.id));
+[["Status",cur],["Contact",t.contact||"Not provided"],["Age or grade",t.grade||"Not provided"],["Knows the owner from",t.how],["Vibes",t.vibes],["Why they deserve a spot",t.why],["What they bring",t.bring],["Best joke or moment",t.fun]].forEach(function(p){var d=el("p");d.appendChild(el("b",p[0]+": "));d.appendChild(document.createTextNode(p[1]||"Not provided"));V.appendChild(d)});
+var bar=el("div",null,"vb");
+[["ac","Accept","accepted"],["wl","Waitlist","waitlist"],["de","Decline","declined"]].forEach(function(x){var b=el("button",x[1],x[0]);b.type="button";b.disabled=!canDecide;b.onclick=function(){var v=getV();v[t.id]={t:t,status:x[2],by:me,at:Date.now()};setV(v);renderList();open(t)};bar.appendChild(b)});
+V.appendChild(bar);
+if(!canDecide)V.appendChild(el("p","Only the owners (Josh and Haley) can accept, waitlist or decline. You can read the application."));
+if(cur!=="pending"){var m=MSG[cur](t);V.appendChild(el("h3","Tell them: "+cur));V.appendChild(el("div",m,"msg"));var l=contactLink(t,m);if(l){var a=el("a","Open message to "+t.contact,"btn");a.href=l;a.style.cssText="display:block;text-align:center;margin-top:8px";V.appendChild(a)}var cp=el("button","Copy message","btn alt");cp.type="button";cp.style.cssText="margin:10px 0 0;width:100%";cp.onclick=function(){try{navigator.clipboard.writeText(m);cp.textContent="Copied"}catch(e){}};V.appendChild(cp);V.appendChild(el("p","This page can't send it for you. Tap the button to open it in your messages or email.","sub")).style.fontSize=".85rem"}
+V.scrollIntoView({behavior:"smooth"})}
+function tryLoad(s){try{var t=dec(s);if(!t||!t.id||!t.name)throw 0;$("cerr").textContent="";open(t)}catch(e){$("cerr").textContent="That link or code did not work. Ask them to copy it again from their ticket."}}
+$("load").onclick=function(){tryLoad($("code").value)};
+renderList();if(location.hash.length>5)tryLoad(location.hash);
+})();</script></body></html>
