@@ -4,6 +4,7 @@
 <p class="sub" style="margin-left:0">Answer for real. The best answers get the spots.</p>
 <form id="f" onsubmit="return false">
 <label for="name">Name or nickname</label><input id="name" maxlength="40" placeholder="What should we call you?" autocomplete="off">
+<label for="contact">Your email or phone number <small>(required, so the owners can reach you)</small></label><input id="contact" maxlength="60" placeholder="you@email.com or 555-123-4567" autocomplete="off" inputmode="email">
 <label for="grade">Age or grade <small>(optional)</small></label><input id="grade" maxlength="20" placeholder="Optional">
 <label for="how">How do you know the GC owner?</label>
 <select id="how"><option value="">Pick one</option><option>Friend</option><option>School</option><option>Family</option><option>Online</option><option>Friend of a friend</option><option>Other</option></select>
@@ -16,8 +17,8 @@
 <div class="err" id="err"></div>
 <button class="btn" type="button" id="go" style="margin-top:14px;width:100%">Submit my tryout</button>
 </form>
-<div id="result"><div class="ticket"><h3>Tryout received</h3><div class="id" id="tid"></div><p id="tname"></p>
-<p>Screenshot this ticket and send it to the GC owner so they can review it.</p>
+<div id="result"><div class="ticket"><h3>Tryout received</h3><div class="id" id="tid"></div><p id="tname"></p><p id="tcontact"></p>
+<p>Send your review link to the GC owner so they can accept, decline or waitlist you. Screenshotting this ticket works too.</p><input id="rlink" readonly style="margin:8px 0"><button class="btn" type="button" id="copy" style="width:100%">Copy my review link</button>
 <p><small>This page can't send your tryout anywhere on its own. Your ticket is saved on this device only.</small></p></div>
 <div style="text-align:center;margin-top:18px"><button class="btn alt" type="button" id="again" style="margin:0">Redo my tryout</button></div></div>
 </div>
@@ -26,18 +27,24 @@ var V=["Funny","Hype","Chill","Loyal","Creative","Gamer","Smart","Wild"],box=doc
 V.forEach(function(v){var l=document.createElement("label");l.innerHTML='<input type="checkbox" value="'+v+'"><span>'+v+'</span>';box.appendChild(l)});
 box.addEventListener("change",function(e){if(box.querySelectorAll("input:checked").length>3){e.target.checked=false}});
 function $(i){return document.getElementById(i)}
-function show(t){$("f").style.display="none";$("result").style.display="block";$("tid").textContent=t.id;$("tname").textContent=t.name+" | "+t.vibes}
+function code(t){var j=JSON.stringify(t),b=btoa(unescape(encodeURIComponent(j)));return b.replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function link(t){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"review.html#"+code(t)}
+function show(t){$("f").style.display="none";$("result").style.display="block";$("tid").textContent=t.id;$("tname").textContent=t.name+" | "+t.vibes;$("tcontact").textContent="Contact: "+(t.contact||"not added");$("rlink").value=link(t)}
+$("copy").onclick=function(){var r=$("rlink");r.select();try{navigator.clipboard.writeText(r.value)}catch(e){document.execCommand("copy")}$("copy").textContent="Copied. Now send it to a GC owner"};
 var saved=null;try{saved=JSON.parse(localStorage.getItem("gc_tryout")||"null")}catch(e){}
 if(saved)show(saved);
 $("go").onclick=function(){
  var n=$("name").value.trim(),w=$("why").value.trim(),b=$("bring").value.trim(),h=$("how").value;
  var vs=[].map.call(box.querySelectorAll("input:checked"),function(x){return x.value});
  if(!n){$("err").textContent="Put your name or nickname.";return}
+ var c=$("contact").value.trim(),isE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c),isP=c.replace(/\D/g,"").length>=10&&/^[0-9+()\-.\s]+$/.test(c);
+ if(!c){$("err").textContent="Add your email or phone number so the owners can reach you.";return}
+ if(!isE&&!isP){$("err").textContent="That email or phone number looks wrong. Check it.";return}
  if(!h){$("err").textContent="Tell us how you know the GC owner.";return}
  if(w.length<20){$("err").textContent="Give a real answer for why you deserve a spot (a few words more).";return}
  if(!b){$("err").textContent="Tell us what you'll bring.";return}
  if(!$("agree").checked){$("err").textContent="You have to agree to the rules.";return}
- var t={id:"GC-"+Math.floor(1000+Math.random()*9000),name:n,vibes:vs.length?vs.join(", "):"Mystery",why:w};
+ var t={id:"GC-"+Math.floor(1000+Math.random()*9000),name:n,contact:c,grade:$("grade").value.trim(),how:h,vibes:vs.length?vs.join(", "):"Mystery",why:w,bring:b,fun:$("fun").value.trim()};
  try{localStorage.setItem("gc_tryout",JSON.stringify(t))}catch(e){}
  show(t);window.scrollTo(0,0)};
 $("again").onclick=function(){try{localStorage.removeItem("gc_tryout")}catch(e){}$("result").style.display="none";$("f").style.display="block"};
