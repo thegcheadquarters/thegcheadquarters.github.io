@@ -1,4 +1,31 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The GC Headquarters</title><link rel="icon" type="image/png" href="favicon.png"><link rel="apple-touch-icon" href="favicon.png"><link rel="stylesheet" href="style.css"></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The GC Headquarters</title><link rel="icon" type="image/png" href="favicon.png"><link rel="apple-touch-icon" href="favicon.png"><link rel="stylesheet" href="style.css"><style>
+/* Keep the home crest compact and give the content more room. */
+.wrap{max-width:1040px}
+.hero{padding-top:24px}
+.hero .crest{width:min(190px,45vw);margin-bottom:20px}
+.hero h1{font-size:clamp(2.35rem,9.5vw,6rem)}
+.hero .sub{font-size:1.2rem;max-width:660px;color:#c6c9df}
+.card h3{font-size:1.3rem}
+.card p{font-size:1.05rem;color:#c6c9df}
+.stat small{font-size:.95rem;color:#c6c9df}
+h2{font-size:1.9rem}
+@media(max-width:520px){
+nav{padding:12px}
+nav .links{gap:0}
+nav .links a{padding:7px 9px}
+.wrap{padding-top:18px}
+.hero{padding-top:12px}
+.hero .crest{width:150px;margin-bottom:18px}
+.hero h1{font-size:clamp(2rem,9.2vw,3rem);letter-spacing:-1px}
+.hero .sub{font-size:1.15rem}
+.hero .btn{display:block;width:100%;max-width:340px;margin:14px auto 0}
+.stats{grid-template-columns:1fr;gap:10px}
+.stat{display:flex;align-items:center;justify-content:center;gap:12px;padding:12px}
+.stat b{font-size:1.8rem}
+.stat small{font-size:1rem}
+.grid{grid-template-columns:1fr}
+}
+</style></head><body>
 <nav><a class="logo" href="index.html">GC <b>HQ</b></a><div class="links"><a href="index.html" class="on">Home</a><a href="tryout.html" class="">Tryouts</a><a href="rules.html" class="">Rules</a><a href="owner-login.html">Owners</a></div></nav>
 <div class="wrap">
 <div class="hero"><img class="crest" src="crest.jpg" alt="The GC Headquarters crest. Collab: Haley T x Joshua S x Genesis S. Starlight Chapter, EST. 2026."><div class="badge">TRYOUTS NOW OPEN</div>
